@@ -62,9 +62,9 @@ class break_the_hash(threading.Thread):
             self.count += 1
             Crack_dict[str(self.number)]= self.count
             password = passmaker(MIN_LENGTH_OF_PASSWORD, MAX_LENGTH_OF_PASSWORD)
-            if args.hash_type.lower() == 'md5':
+            if self.hash_type_of_hash.lower() == 'md5':
                 gen_hash = hashlib.md5(password).hexdigest()
-            elif args.hash_type.lower() == 'sha1':
+            elif self.hash_type_of_hash.lower() == 'sha1':
                 gen_hash = hashlib.sha1(password).hexdigest()
             if gen_hash == self.encrypted_hash:
                 print "\n[+] Your hashed just got cracked"
@@ -78,12 +78,14 @@ class break_the_hash(threading.Thread):
 Google Attack
 """
 class google_attack():
-    def __init__(self):
+    def __init__(self, hash_, _typeof):
+        self.hash_ = hash_
+        self._typeof = _typeof 
         google_wordlist = []
         try:
             google_opener = urllib2.build_opener()
             google_opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-            page_handle = google_opener.open('http://www.google.com/search?q=%s' % (args.hash))
+            page_handle = google_opener.open('http://www.google.com/search?q=%s' % (self.hash_))
         except urllib2.URLError as Urle:
             print "[-]Error :"+str(Urle)
             time.sleep(3)
@@ -92,18 +94,17 @@ class google_attack():
             word_gatherer = re.split(r"\s+", str(page_handle.read()))
             
             for password in word_gatherer:
-                if args.hash_type.lower() == 'md5':
+                if self._typeof.lower() == 'md5':
                     gen_hash = hashlib.md5(password).hexdigest()
-                elif args.hash_type.lower() == 'sha1':
+                elif self._typeof.lower() == 'sha1':
                     gen_hash = hashlib.sha1(password).hexdigest()
-                if gen_hash == args.hash:
+                if gen_hash == self.hash_:
                     print "[+] Your hashed just got cracked"
                     print "[+] Password : "+ password
                     break
             else:
                 print "[-]Hash not found."
-            time.sleep(3)
-            sys.exit("[-] Exiting...")
+            
             
             
 """
@@ -119,6 +120,67 @@ def get_attacks():
 Main Menu
 """
 
+"""
+Function for compitability
+"""
+options= {}
+def use_script(method="None", hash_to_use="None", type_of_hash="None", threads_number=0):
+    if method=="None":
+        return locals().keys()
+    else:
+        if hash_to_use and type_of_hash and threads_number and method.lower()=="bruteforce":
+            if type_of_hashe.lower() == 'md5':
+                if len(hash_to_use) != 32:
+                    print '[-] Error: "%s" doesn\'t \n    seem to be a valid MD5 hash "32 bit hexadecimal"' % hash_to_use
+            elif type_of_hashe.lower() == 'sha1':
+                pass
+            else:
+                pass
+            print '[*] Hash Cracker is starting ...'
+            print '[*] hash_type {Ctrl + C} to stop the cracker'
+            thread_check = '[*] Starting threads [%s/%s]' % ("0", threads_number)
+            sys.stdout.write(thread_check)
+            sys.stdout.flush()
+            try:
+                for i in range(int(threads_number)):
+                    break_the_hash(hash_to_use, type_of_hash, i).start()
+                    thread_check = '[*] Starting threads [%s/%s]' % (str(i+1), threads_number)
+                    sys.stdout.write('\b'*len(thread_check))
+                    sys.stdout.write(thread_check)
+                    sys.stdout.flush()
+            except KeyboardInterrupt:
+                print '\n[*] Stopping threads ...'
+                COMMAND = CANCEL
+                time.sleep(3)
+                print ("[-] Exiting...")
+            print '\n[*] Threads Started ...'
+            attack = 0
+            line = "[*] Tries against the hash #%s" %(attack)
+            sys.stdout.write(line)
+            sys.stdout.flush()
+            try:
+                while COMMAND != CANCEL:
+                    attack = get_attacks()
+                    line = "[*] Tries against the hash #%s" %(attack)
+                    sys.stdout.write('\b'*len(line))
+                    sys.stdout.write(line)
+                    sys.stdout.flush()
+                    
+            except KeyboardInterrupt:
+                print '\n[*] Stopping threads ...'
+                COMMAND = CANCEL
+                time.sleep(3)
+                print("[-] Exiting...")
+        elif hash_to_use and type_of_hash and method.lower()=="google":
+            if type_of_hash.lower() == 'md5':
+                if len(hash_to_use) != 32:
+                    print('[-] Error: "%s" doesn\'t \n    seem to be a valid MD5 hash "32 bit hexadecimal"' % hash_to_use)
+            elif type_of_hash.lower() == 'sha1':
+                pass
+            print '[*] Hash Cracker is starting ...'
+            google_attack(hash_to_use, type_of_hash)
+            time.sleep(3)
+            sys.exit("[-] Exiting...")
 ascii_logo = """ __  __     _   _           _     
  \ \/ /    | | | | __ _ ___| |__  
   \  /_____| |_| |/ _` / __| '_ \ 
@@ -197,8 +259,12 @@ if __name__ == '__main__':
         else:
             usage()
         print '[*] Hash Cracker is starting ...'
-        google_attack()
+        google_attack(args.hash, args.hash_type)
+        time.sleep(3)
+        sys.exit("[-] Exiting...")
     else:
         parser.print_help()
         time.sleep(3)
         sys.exit("[*] Exiting...")
+        
+

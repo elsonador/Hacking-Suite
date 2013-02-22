@@ -11,14 +11,7 @@ MAX_LENGTH_OF_PASSWORD = 12
 """
 Import Important modules
 """
-import argparse
-import os
-import sys
-import hashlib
-import string
-import random
-import threading
-import time
+import argparse, os, sys, re, hashlib, string, random, threading, time, urllib2
 """
 Set some important Values
 """
@@ -44,22 +37,22 @@ def passmaker(pass_min_length, pass_max_length):
 """
 Password Cracking Class
 """
-#Crack_tries = []
 Crack_dict = {}
+
+
 class break_the_hash(threading.Thread):
-    def __init__(self, encrypted_hash, type_of_hash, number):
+    def __init__(self, encrypted_hash, hash_type_of_hash, number):
         threading.Thread.__init__(self)
         self.encrypted_hash = encrypted_hash
         self.number = number + 1
         self.count = 0
-        self.type_of_hash = type_of_hash
+        self.hash_type_of_hash = hash_type_of_hash
     def run(self):
         global COMMAND
         global CANCEL
         global LOCK
         Crack_dict[str(self.number)]= self.count
         LOCK.acquire()
-        #print("[*] Starting thread #{0}".format(self.number))
         LOCK.release()
         while COMMAND != CANCEL:
             """
@@ -69,9 +62,9 @@ class break_the_hash(threading.Thread):
             self.count += 1
             Crack_dict[str(self.number)]= self.count
             password = passmaker(MIN_LENGTH_OF_PASSWORD, MAX_LENGTH_OF_PASSWORD)
-            if type_of_hash.lower() == 'md5':
+            if args.hash_type.lower() == 'md5':
                 gen_hash = hashlib.md5(password).hexdigest()
-            elif type_of_hash.lower() == 'sha1':
+            elif args.hash_type.lower() == 'sha1':
                 gen_hash = hashlib.sha1(password).hexdigest()
             if gen_hash == self.encrypted_hash:
                 print "\n[+] Your hashed just got cracked"
@@ -79,10 +72,43 @@ class break_the_hash(threading.Thread):
                 COMMAND = CANCEL
                 break
         LOCK.acquire()
-        #Crack_tries.append(str(self.count))
-        #print("[*] Stopping thread #{0}".format(self.number))
         LOCK.release()
 
+"""
+Google Attack
+"""
+class google_attack():
+    def __init__(self):
+        google_wordlist = []
+        try:
+            google_opener = urllib2.build_opener()
+            google_opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+            page_handle = google_opener.open('http://www.google.com/search?q=%s' % (args.hash))
+        except urllib2.URLError as Urle:
+            print "[-]Error :"+str(Urle)
+            time.sleep(3)
+            sys.exit("[-] Exiting...")
+        else:
+            word_gatherer = re.split(r"\s+", str(page_handle.read()))
+            
+            for password in word_gatherer:
+                if args.hash_type.lower() == 'md5':
+                    gen_hash = hashlib.md5(password).hexdigest()
+                elif args.hash_type.lower() == 'sha1':
+                    gen_hash = hashlib.sha1(password).hexdigest()
+                if gen_hash == args.hash:
+                    print "[+] Your hashed just got cracked"
+                    print "[+] Password : "+ password
+                    break
+            else:
+                print "[-]Hash not found."
+            time.sleep(3)
+            sys.exit("[-] Exiting...")
+            
+            
+"""
+Tries Calculator
+"""
 def get_attacks():
     sumup = 0
     for p in Crack_dict:
@@ -93,16 +119,14 @@ def get_attacks():
 Main Menu
 """
 
-
-
 ascii_logo = """ __  __     _   _           _     
  \ \/ /    | | | | __ _ ___| |__  
   \  /_____| |_| |/ _` / __| '_ \ 
   /  \_____|  _  | (_| \__ \ | | |
  /_/\_\    |_| |_|\__,_|___/_| |_|
 """
-print hashlib.md5("aaaa").hexdigest()
-#a78e19f49cf2dfb019d933a06470ef66
+#print hashlib.md5("aaaa").hexdigest()
+#--google --hash 74b87337454200d4d33f80c4663dc5e5 --type md5 
 
 """
 Argument Parsing
@@ -113,29 +137,30 @@ if __name__ == '__main__':
         description=ascii_logo,
         add_help=True,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='Examples: %(prog)s --hash a78e19f49cf2dfb019d933a06470ef66 --type md5 --threads 100')
+        epilog='Examples: %(prog)s --hash a78e19f49cf2dfb019d933a06470ef66 --hash_type md5 --threads 100')
 
     parser.add_argument('-t', '--hash', dest='hash', help='Add the hash you want to crack')
-    parser.add_argument('-d', '--type', dest='type', help='Define if your hash is md5 or sha1')
+    parser.add_argument('-d', '--type', dest='hash_type', help='Define if your hash is md5 or sha1')
     parser.add_argument('-n', '--threads', dest='threads_limit', help='Define how many threads you want to use')
-
+    parser.add_argument('-b', '--bruteforce', action="store_true", dest="brute", help='Bruteforce the hash')
+    parser.add_argument('-g', '--google', action="store_true", dest="google_search", help='Use google in order to find the hash')
     args = parser.parse_args()
-    if args.hash and args.type and args.threads_limit:
-        if args.type.lower() == 'md5':
+    if args.hash and args.hash_type and args.threads_limit and args.brute:
+        if args.hash_type.lower() == 'md5':
             if len(args.hash) != 32:
                 sys.exit('[-] Error: "%s" doesn\'t \n    seem to be a valid MD5 hash "32 bit hexadecimal"' % args.hash)
-        elif args.type.lower() == 'sha1':
+        elif args.hash_type.lower() == 'sha1':
             pass
         else:
             usage()
         print '[*] Hash Cracker is starting ...'
-        print '[*] Type {Ctrl + C} to stop the cracker'
+        print '[*] hash_type {Ctrl + C} to stop the cracker'
         thread_check = '[*] Starting threads [%s/%s]' % ("0", args.threads_limit)
         sys.stdout.write(thread_check)
         sys.stdout.flush()
         try:
             for i in range(int(args.threads_limit)):
-                break_the_hash(args.hash, args.type, i).start()
+                break_the_hash(args.hash, args.hash_type, i).start()
                 thread_check = '[*] Starting threads [%s/%s]' % (str(i+1), args.threads_limit)
                 sys.stdout.write('\b'*len(thread_check))
                 sys.stdout.write(thread_check)
@@ -163,6 +188,16 @@ if __name__ == '__main__':
             COMMAND = CANCEL
             time.sleep(3)
             sys.exit("[-] Exiting...")
+    elif args.hash and args.hash_type and args.google_search:
+        if args.hash_type.lower() == 'md5':
+            if len(args.hash) != 32:
+                sys.exit('[-] Error: "%s" doesn\'t \n    seem to be a valid MD5 hash "32 bit hexadecimal"' % args.hash)
+        elif args.hash_type.lower() == 'sha1':
+            pass
+        else:
+            usage()
+        print '[*] Hash Cracker is starting ...'
+        google_attack()
     else:
         parser.print_help()
         time.sleep(3)

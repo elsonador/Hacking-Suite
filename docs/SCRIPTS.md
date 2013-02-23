@@ -6,8 +6,8 @@ SCRIPTS
 
     Ok your script code is
 
-    def scanit(host, port):
-        #DO WORK HERE
+    `def scanit(host, port):
+        #DO WORK HERE`
 
     First you have to write a nw function
     that will execute the scanit function

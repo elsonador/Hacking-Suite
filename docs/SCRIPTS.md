@@ -6,13 +6,14 @@ SCRIPTS
 
 Ok your script code is
 
-    ```python
-    def scanit(host, port):
-        #DO WORK HERE
-    ```
+```python
+def scanit(host, port):
+    #DO WORK HERE
+```
 
-First you have to write a nw function
+First you have to write a new function
 that will execute the scanit function
+
 ```python
 def use_script(host="NONE", port="NONE"):
     if host == "NONE" and port == "NONE":

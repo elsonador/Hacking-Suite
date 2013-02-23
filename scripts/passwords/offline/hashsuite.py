@@ -124,7 +124,7 @@ Main Menu
 Function for compitability
 """
 options= {}
-def use_script(method="None", hash_to_use="None", type_of_hash="None", threads_number=0):
+def use_script(method="None", hash_to_use="None", type_of_hash="None", threads_number="None"):
     if method=="None":
         return locals().keys()
     else:

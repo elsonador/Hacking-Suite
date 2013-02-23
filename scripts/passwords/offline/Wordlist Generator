@@ -1,0 +1,147 @@
+    print "Wordlist Creator."
+     
+    file=""
+     
+    chars=raw_input("Enter the characters(letters/numbers):")
+     
+    print "\n"
+    num=input("Enter a number 0-10:")
+     
+    print "\n\nResults:"
+     
+     
+     
+    if(num==0):
+        print "Nothing\n"
+     
+       
+     
+    elif(num==1):
+        for var1 in chars:
+            print var1
+            file+=var1+"\n"
+     
+           
+     
+    elif(num==2):
+        for var1 in chars:
+            for var2 in chars:
+              print var1,var2
+              file+=var1+" "+var2+"\n"
+             
+     
+             
+     
+    elif(num==3):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                 print var1,var2,var3
+                 file+=var1+" "+var2+" "+var3+"\n"
+                 
+     
+     
+    elif(num==4):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                     print var1,var2,var3,var4
+                     file+=var1+" "+var2+" "+var3+" "+var4+"\n"
+     
+                 
+       
+    elif(num==5):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                       for var5 in chars:
+                           print var1,var2,var3,var4,var5
+                           file+=var1+" "+var2+" "+var3+" "+var4+" "+var5+"\n"
+     
+     
+       
+    elif(num==6):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                       for var5 in chars:
+                           for var6 in chars:
+                             print var1,var2,var3,var4,var5,var6
+                             file+=var1+" "+var2+" "+var3+" "+var4+" "+var5+" "+var6+"\n"
+     
+     
+                             
+    elif(num==7):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                       for var5 in chars:
+                           for var6 in chars:
+                               for var7 in chars:
+                                 print var1,var2,var3,var4,var5,var6,var7
+                                 file+=var1+" "+var2+" "+var3+" "+var4+" "+var5+" "+var6+" "+var7+"\n"
+                             
+     
+       
+    elif(num==8):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                       for var5 in chars:
+                           for var6 in chars:
+                               for var7 in chars:
+                                   for var8 in chars:
+                                      print var1,var2,var3,var4,var5,var6,var7,var8
+                                      file+=var1+" "+var2+" "+var3+" "+var4+" "+var5+" "+var6+" "+var7+" "+var8+"\n"
+     
+                               
+       
+    elif(num==9):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                       for var5 in chars:
+                           for var6 in chars:
+                               for var7 in chars:
+                                  for var8 in chars:
+                                      for var9 in chars:
+                                        print var1,var2,var3,var4,var5,var6,var7,var8,var9
+                                        file+=var1+" "+var2+" "+var3+" "+var4+" "+var5+" "+var6+" "+var7+" "+var8+" "+var9+"\n"
+     
+     
+     
+       
+    elif(num==10):
+        for var1 in chars:
+            for var2 in chars:
+               for var3 in chars:
+                   for var4 in chars:
+                       for var5 in chars:
+                           for var6 in chars:
+                               for var7 in chars:
+                                  for var8 in chars:
+                                      for var9 in chars:
+                                          for var10 in chars:
+                                            print var1,var2,var3,var4,var5,var6,var7,var8,var9,var10
+                                            file+=var1+" "+var2+" "+var3+" "+var4+" "+var5+" "+var6+" "+var7+" "+var8+" "+var9+" "+var10+"\n"
+     
+     
+     
+    else:
+        print "Too big number\n"
+     
+     
+     
+     
+    my_file=open("wordlist.txt","w")
+     
+    my_file.write(file)
+    print "\nWordlist is saved at 'wordlist.txt'"
+     
+    my_file.close()

@@ -6,10 +6,10 @@ Hacking-Suite
     <td>Author:</td><td>ElSonador</td>
   </tr>
   <tr>
-    <td>Author:</td><td>kwnos100</td>
+    <td>       </td><td>kwnos100</td>
   </tr>
   <tr>
-    <td>Author:</td><td>Dr4rqua</td>
+    <td>       </td><td>Dr4rqua</td>
   </tr>   
 </table>
 
